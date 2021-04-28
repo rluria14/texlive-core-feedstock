@@ -6,7 +6,7 @@ set -x
 
 unset TEXMFCNF; export TEXMFCNF
 LANG=C; export LANG
-[[ -d "${PREFIX}"/texmf ]] || mkdir -p "${PREFIX}"/texmf
+#[[ -d "${PREFIX}"/texmf ]] || mkdir -p "${PREFIX}"/texmf
 
 # Need the fallback path for testing in some cases.
 if [ "$(uname)" == "Darwin" ]
