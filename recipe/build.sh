@@ -7,7 +7,6 @@ set -x
 unset TEXMFCNF; export TEXMFCNF
 LANG=C; export LANG
 [[ -d "${PREFIX}"/texmf ]] || mkdir -p "${PREFIX}"/texmf
-./configure --help
 
 # Need the fallback path for testing in some cases.
 if [ "$(uname)" == "Darwin" ]
@@ -62,7 +61,7 @@ export PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig"
 
 find . -name "TexLive"
 install -v -m644 texk/tests/TeXLive/* "${SHARE_DIR}/tlpkg/TeXLive" || exit 1
-install -v -m644 $RECIPE_DIR/mktexlsr.pl "${SHARE_DIR}/texmf-dist/scripts/texlive" || exit 1
+install -v -m644 texmf/texmf-dist/scripts/texlive/mktexlsr.pl "${SHARE_DIR}/texmf-dist/scripts/texlive" || exit 1
 
 export KPATHSEA_WARNING=0
 
@@ -113,30 +112,60 @@ mkdir -p tmp_build && pushd tmp_build
   # There is a race-condition in the build system.
   make -j${CPU_COUNT} ${VERBOSE_AT} || make -j1 ${VERBOSE_AT}
   # make check reads files from the installation prefix:
-  make install -j${CPU_COUNT}
+  make install-strip -j${CPU_COUNT}
   make texlinks
 
-    # At this point BLFS does:
+  # At this point BLFS does:
   # tar -xf ../../texlive-20180414-texmf.tar.xz -C /opt/texlive/2018 --strip-components=1
   # .. but we would like to avoid this 2.5GB of stuff.
-#  [[ -d "${SHARE_DIR}/texmf-dist" ]] || mkdir -p "${SHARE_DIR}/texmf-dist"
-#  cp -rf "${SRC_DIR}"/texmf/texmf-dist/* "${SHARE_DIR}/texmf-dist/"
+  [[ -d "${SHARE_DIR}/texmf-dist" ]] || mkdir -p "${SHARE_DIR}/texmf-dist"
+  cp -rf "${SRC_DIR}"/texmf/texmf-dist/* "${SHARE_DIR}/texmf-dist/"
 
-  if [[ ! ${target_platform} =~ .*linux.* ]]; then
-    VERBOSE=1 LC_ALL=C make check ${VERBOSE_AT}
-  elif [[ ${TEST_SEGFAULT} == yes ]] && [[ ${target_platform} =~ .*linux.* ]]; then
-    LC_ALL=C make check ${VERBOSE_AT}
-    echo "pushd ${SRC_DIR}/tmp_build/texk/web2c"
-    echo "LC_ALL=C make check ${VERBOSE_AT}"
-    echo "cat mplibdir/mptraptest.log"
-    pushd "${SRC_DIR}/tmp_build/texk/web2c/mpost"
-      # I believe mpost test fails here because it tries to load mpost itself as a configuration file
-      # .. this happens in both failing tests on Linux. Debug builds (CFLAGS-wise) do not suffer a
-      # segfault at this point but release ones. Skipping for now, will re-visit later.
-      LC_ALL=C ../mpost --ini ../mpost
-    popd
-    exit 1
-  fi
+  # get some ini files too
+  git clone https://github.com/latex3/tex-ini-files.git "${SRC_DIR}"/texmf/texmf-dist/tex-ini-files
+  [[ -d "${SHARE_DIR}/texmf-dist/tex/generic" ]] || mkdir -p "${SHARE_DIR}/texmf-dist/tex/generic"
+  cp -rf "${SRC_DIR}"/texmf/texmf-dist/tex-ini-files "${SHARE_DIR}"/texmf-dist/tex/generic
+
+  #xetex
+  pushd "${SHARE_DIR}"
+  #wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/tex/generic/tex-ini-files/
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/dvipdfmx/dvipdfmx.cfg
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/tex/generic/unicode-data/
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/tex/latex/base/
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/tex/plain/etex/
+  #wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/fonts/source/public/cm/
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/fonts/cmap/dvipdfmx/
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/fonts/map/dvipdfmx/cid-x.map
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/fonts/map/glyphlist/
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/texconfig/
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/fmtutil.cnf
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/texmf.cnf
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/cp227.tcx
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktex.cnf
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktex.opt
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktexdir
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktexdir.opt
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktexnam
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktexnam.opt
+  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktexupd
+  popd
+
+
+#  if [[ ! ${target_platform} =~ .*linux.* ]]; then
+#    VERBOSE=1 LC_ALL=C make check ${VERBOSE_AT}
+#  elif [[ ${TEST_SEGFAULT} == yes ]] && [[ ${target_platform} =~ .*linux.* ]]; then
+#    LC_ALL=C make check ${VERBOSE_AT}
+#    echo "pushd ${SRC_DIR}/tmp_build/texk/web2c"
+#    echo "LC_ALL=C make check ${VERBOSE_AT}"
+#    echo "cat mplibdir/mptraptest.log"
+#    pushd "${SRC_DIR}/tmp_build/texk/web2c/mpost"
+#      # I believe mpost test fails here because it tries to load mpost itself as a configuration file
+#      # .. this happens in both failing tests on Linux. Debug builds (CFLAGS-wise) do not suffer a
+#      # segfault at this point but release ones. Skipping for now, will re-visit later.
+#      LC_ALL=C ../mpost --ini ../mpost
+#    popd
+#    exit 1
+#  fi
 popd
 
 # Remove info and man pages.

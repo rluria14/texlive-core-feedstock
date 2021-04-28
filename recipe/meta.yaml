@@ -5,11 +5,14 @@ package:
   version: {{ version }}
 
 source:
-  url: ftp://tug.org/texlive/historic/2018/texlive-{{ version }}-source.tar.xz
-  sha256: fe0036d5f66708ad973cdc4e413c0bb9ee2385224481f7b0fb229700a0891e4e
-  patches:
-    - texlive-20180414-source-upstream_fixes-3.patch
+  - url: ftp://tug.org/texlive/historic/2018/texlive-{{ version }}-source.tar.xz
+    sha256: fe0036d5f66708ad973cdc4e413c0bb9ee2385224481f7b0fb229700a0891e4e
+    patches:
+      - texlive-20180414-source-upstream_fixes-3.patch
 #    - 0001-support-poppler-0.64.0.patch
+  - url: https://www.tug.org/texlive/devsrc/Master/texmf-dist/scripts/texlive/mktexlsr.pl
+    sha256: a1164518f96e76ed37766326da154a2656ab7bda94333049408dbe391bdae16c
+    folder: texmf/texmf-dist/scripts/texlive
 
 build:
   number: 7
