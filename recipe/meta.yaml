@@ -51,7 +51,6 @@ requirements:
 test:
   commands:
     - kpsewhich -var-value=TEXMFROOT
-    - kpsewhich --debug -1 latex.fmt
     - kpsewhich --show-path=fmt
     - pdftex --version
     - bibtex --version
