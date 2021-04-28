@@ -45,6 +45,7 @@ requirements:
     - zlib
   run:
     - fontconfig
+    - perl
 
 test:
   commands:
