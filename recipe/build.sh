@@ -6,6 +6,8 @@ set -x
 
 unset TEXMFCNF; export TEXMFCNF
 LANG=C; export LANG
+[[ -d "${PREFIX}"/texmf ]] || mkdir -p "${PREFIX}"/texmf
+./configure --help
 
 # Need the fallback path for testing in some cases.
 if [ "$(uname)" == "Darwin" ]
@@ -120,21 +122,21 @@ mkdir -p tmp_build && pushd tmp_build
 #  [[ -d "${SHARE_DIR}/texmf-dist" ]] || mkdir -p "${SHARE_DIR}/texmf-dist"
 #  cp -rf "${SRC_DIR}"/texmf/texmf-dist/* "${SHARE_DIR}/texmf-dist/"
 
-#  if [[ ! ${target_platform} =~ .*linux.* ]]; then
-#    VERBOSE=1 LC_ALL=C make check ${VERBOSE_AT}
-#  elif [[ ${TEST_SEGFAULT} == yes ]] && [[ ${target_platform} =~ .*linux.* ]]; then
-#    LC_ALL=C make check ${VERBOSE_AT}
-#    echo "pushd ${SRC_DIR}/tmp_build/texk/web2c"
-#    echo "LC_ALL=C make check ${VERBOSE_AT}"
-#    echo "cat mplibdir/mptraptest.log"
-#    pushd "${SRC_DIR}/tmp_build/texk/web2c/mpost"
-#      # I believe mpost test fails here because it tries to load mpost itself as a configuration file
-#      # .. this happens in both failing tests on Linux. Debug builds (CFLAGS-wise) do not suffer a
-#      # segfault at this point but release ones. Skipping for now, will re-visit later.
-#      LC_ALL=C ../mpost --ini ../mpost
-#    popd
-#    exit 1
-#  fi
+  if [[ ! ${target_platform} =~ .*linux.* ]]; then
+    VERBOSE=1 LC_ALL=C make check ${VERBOSE_AT}
+  elif [[ ${TEST_SEGFAULT} == yes ]] && [[ ${target_platform} =~ .*linux.* ]]; then
+    LC_ALL=C make check ${VERBOSE_AT}
+    echo "pushd ${SRC_DIR}/tmp_build/texk/web2c"
+    echo "LC_ALL=C make check ${VERBOSE_AT}"
+    echo "cat mplibdir/mptraptest.log"
+    pushd "${SRC_DIR}/tmp_build/texk/web2c/mpost"
+      # I believe mpost test fails here because it tries to load mpost itself as a configuration file
+      # .. this happens in both failing tests on Linux. Debug builds (CFLAGS-wise) do not suffer a
+      # segfault at this point but release ones. Skipping for now, will re-visit later.
+      LC_ALL=C ../mpost --ini ../mpost
+    popd
+    exit 1
+  fi
 popd
 
 # Remove info and man pages.
