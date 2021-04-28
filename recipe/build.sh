@@ -111,14 +111,14 @@ mkdir -p tmp_build && pushd tmp_build
   # There is a race-condition in the build system.
   make -j${CPU_COUNT} ${VERBOSE_AT} || make -j1 ${VERBOSE_AT}
   # make check reads files from the installation prefix:
-  make install-strip -j${CPU_COUNT}
+  make install -j${CPU_COUNT}
   make texlinks
 
     # At this point BLFS does:
   # tar -xf ../../texlive-20180414-texmf.tar.xz -C /opt/texlive/2018 --strip-components=1
   # .. but we would like to avoid this 2.5GB of stuff.
-  [[ -d "${SHARE_DIR}/texmf-dist" ]] || mkdir -p "${SHARE_DIR}/texmf-dist"
-  cp -rf "${SRC_DIR}"/texmf/texmf-dist/* "${SHARE_DIR}/texmf-dist/"
+#  [[ -d "${SHARE_DIR}/texmf-dist" ]] || mkdir -p "${SHARE_DIR}/texmf-dist"
+#  cp -rf "${SRC_DIR}"/texmf/texmf-dist/* "${SHARE_DIR}/texmf-dist/"
 
 #  if [[ ! ${target_platform} =~ .*linux.* ]]; then
 #    VERBOSE=1 LC_ALL=C make check ${VERBOSE_AT}
