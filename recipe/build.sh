@@ -60,7 +60,7 @@ export PKG_CONFIG_LIBDIR="$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig"
 
 find . -name "TexLive"
 install -v -m644 texk/tests/TeXLive/* "${SHARE_DIR}/tlpkg/TeXLive" || exit 1
-install -v -m644 texmf/texmf-dist/scripts/texlive/mktexlsr.pl "${SHARE_DIR}/texmf-dist/scripts/texlive" || exit 1
+install -v -m644 $RECIPE_DIR/mktexlsr.pl "${SHARE_DIR}/texmf-dist/scripts/texlive" || exit 1
 
 export KPATHSEA_WARNING=0
 
