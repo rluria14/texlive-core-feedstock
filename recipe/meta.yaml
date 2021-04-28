@@ -49,6 +49,7 @@ requirements:
 
 test:
   commands:
+    - kpsewhich -var-value=TEXMFROOT
     - pdftex --version
     - bibtex --version
     # Test the symlinks.
