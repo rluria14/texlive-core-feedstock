@@ -111,22 +111,24 @@ mkdir -p tmp_build && pushd tmp_build
   # There is a race-condition in the build system.
   make -j${CPU_COUNT} ${VERBOSE_AT} || make -j1 ${VERBOSE_AT}
   # make check reads files from the installation prefix:
-  make install -j${CPU_COUNT}
-  if [[ ! ${target_platform} =~ .*linux.* ]]; then
-    VERBOSE=1 LC_ALL=C make check ${VERBOSE_AT}
-  elif [[ ${TEST_SEGFAULT} == yes ]] && [[ ${target_platform} =~ .*linux.* ]]; then
-    LC_ALL=C make check ${VERBOSE_AT}
-    echo "pushd ${SRC_DIR}/tmp_build/texk/web2c"
-    echo "LC_ALL=C make check ${VERBOSE_AT}"
-    echo "cat mplibdir/mptraptest.log"
-    pushd "${SRC_DIR}/tmp_build/texk/web2c/mpost"
-      # I believe mpost test fails here because it tries to load mpost itself as a configuration file
-      # .. this happens in both failing tests on Linux. Debug builds (CFLAGS-wise) do not suffer a
-      # segfault at this point but release ones. Skipping for now, will re-visit later.
-      LC_ALL=C ../mpost --ini ../mpost
-    popd
-    exit 1
-  fi
+  make install-strip -j${CPU_COUNT}
+  make texlinks
+
+#  if [[ ! ${target_platform} =~ .*linux.* ]]; then
+#    VERBOSE=1 LC_ALL=C make check ${VERBOSE_AT}
+#  elif [[ ${TEST_SEGFAULT} == yes ]] && [[ ${target_platform} =~ .*linux.* ]]; then
+#    LC_ALL=C make check ${VERBOSE_AT}
+#    echo "pushd ${SRC_DIR}/tmp_build/texk/web2c"
+#    echo "LC_ALL=C make check ${VERBOSE_AT}"
+#    echo "cat mplibdir/mptraptest.log"
+#    pushd "${SRC_DIR}/tmp_build/texk/web2c/mpost"
+#      # I believe mpost test fails here because it tries to load mpost itself as a configuration file
+#      # .. this happens in both failing tests on Linux. Debug builds (CFLAGS-wise) do not suffer a
+#      # segfault at this point but release ones. Skipping for now, will re-visit later.
+#      LC_ALL=C ../mpost --ini ../mpost
+#    popd
+#    exit 1
+#  fi
 popd
 
 # Remove info and man pages.
@@ -140,5 +142,5 @@ sed \
 rm -f tmp.cnf
 
 # Create symlinks for pdflatex and latex
-ln -s $PREFIX/bin/pdftex $PREFIX/bin/pdflatex
-ln -s $PREFIX/bin/pdftex $PREFIX/bin/latex
+#ln -s $PREFIX/bin/pdftex $PREFIX/bin/pdflatex
+#ln -s $PREFIX/bin/pdftex $PREFIX/bin/latex
