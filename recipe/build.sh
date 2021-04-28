@@ -111,7 +111,7 @@ mkdir -p tmp_build && pushd tmp_build
   # There is a race-condition in the build system.
   make -j${CPU_COUNT} ${VERBOSE_AT} || make -j1 ${VERBOSE_AT}
   # make check reads files from the installation prefix:
-  make install -j${CPU_COUNT}
+  make install-strip -j${CPU_COUNT}
   make texlinks
 
     # At this point BLFS does:
