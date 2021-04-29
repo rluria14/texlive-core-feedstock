@@ -126,31 +126,6 @@ mkdir -p tmp_build && pushd tmp_build
   [[ -d "${SHARE_DIR}/texmf-dist/tex/generic" ]] || mkdir -p "${SHARE_DIR}/texmf-dist/tex/generic"
   cp -rf "${SRC_DIR}"/texmf/texmf-dist/tex-ini-files "${SHARE_DIR}"/texmf-dist/tex/generic
 
-  #xetex
-  pushd "${SHARE_DIR}"
-  #wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/tex/generic/tex-ini-files/
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/dvipdfmx/dvipdfmx.cfg
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/tex/generic/unicode-data/
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/tex/latex/base/
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/tex/plain/etex/
-  #wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/fonts/source/public/cm/
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/fonts/cmap/dvipdfmx/
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/fonts/map/dvipdfmx/cid-x.map
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/fonts/map/glyphlist/
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/texconfig/
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/fmtutil.cnf
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/texmf.cnf
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/cp227.tcx
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktex.cnf
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktex.opt
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktexdir
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktexdir.opt
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktexnam
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktexnam.opt
-  wget -e robots=off -nH -nv --cut-dirs=3 --recursive --no-parent --reject="index.html*" https://www.tug.org/texlive/devsrc/Master/texmf-dist/web2c/mktexupd
-  popd
-
-
 #  if [[ ! ${target_platform} =~ .*linux.* ]]; then
 #    VERBOSE=1 LC_ALL=C make check ${VERBOSE_AT}
 #  elif [[ ${TEST_SEGFAULT} == yes ]] && [[ ${target_platform} =~ .*linux.* ]]; then
